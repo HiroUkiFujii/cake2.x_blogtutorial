@@ -1,0 +1,31 @@
+version: "2"
+services:
+
+ db:
+  build:
+    context: ./db
+  restart: always
+  environment:
+   MYSQL_ROOT_USER: root
+   MYSQL_ROOT_PASSWORD: 2413
+   MYSQL_DATABASE: cake_blog
+  ports:
+   - 33060:3306
+  volumes:
+   - ./db/conf.d:/etc/mysql/conf.d:rw
+   - ./db/initdb.d:/docker-entrypoint-initdb.d
+ web:
+  build:
+    context: ./web
+  volumes:
+   - ./web/src:/var/www/html
+  ports:
+   - "8080:80"
+  links:
+   - db
+   - db:cake_blog
+ phpmyadmin:
+  image: phpmyadmin/phpmyadmin
+  restart: always
+  ports:
+    - 2240:80
